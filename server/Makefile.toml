@@ -1,0 +1,18 @@
+[tasks.generate-api-models]
+command = "docker"
+args = [
+    "run",
+    "--rm",
+    "-v",
+    "${PWD}:/local",
+    "openapitools/openapi-generator-cli",
+    "generate",
+    "-i",
+    "/local/api/api.yaml",
+    "-g",
+    "rust",
+    "-o",
+    "/local/src/models",
+    "--global-property",
+    "models",
+]

@@ -1,0 +1,90 @@
+openapi: 3.0.0
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/Backprop9/Addons/1.0.0'
+info:
+  description: This is a simple API
+  version: "1.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+tags:
+  - name: addons
+    description: About Addons
+  
+paths:
+  /addons:
+    get:
+      summary: List all addons
+      tags:
+        - addons
+      responses:
+        '200':
+          description: A JSON array of addons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Addon'
+    
+    post:
+      summary: Create new Addon
+      tags:
+        - addons
+      requestBody:
+        description: Upload a new Addon
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Addon'
+      responses:
+        '201':
+          description: Addon created
+
+  '/addons/{id}':
+    get:
+      tags:
+        - addons
+      summary: Returns addon with ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: One addon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Addon'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Addon not found
+                
+  
+  
+components:
+  schemas:
+    Addon:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Addon 1"
+      
