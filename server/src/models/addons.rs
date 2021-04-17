@@ -1,11 +1,23 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use std::{ops::{Deref, DerefMut}, sync::Arc};
-use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Addon {
     pub id: Uuid,
+    pub name: String,
+}
+
+impl Addon {
+    pub fn new(name: String) -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            name,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AddonPost {
     pub name: String,
 }
 

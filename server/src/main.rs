@@ -3,13 +3,14 @@ mod error;
 mod filters;
 mod handlers;
 mod models;
+mod redacted;
 mod sql;
 
 use environment::Environment;
 use hyper::Server;
 use listenfd::ListenFd;
-use sqlx::postgres::PgPoolOptions;
-use std::{collections::HashMap, convert::Infallible};
+
+use std::convert::Infallible;
 use warp::Filter;
 
 // systemfd --no-pid -s http::3030 -- cargo watch -x 'run'
@@ -28,7 +29,8 @@ async fn main() -> anyhow::Result<()> {
         .allow_any_origin() // TODO change this
         .allow_methods(vec!["OPTIONS", "GET", "POST", "DELETE"]);
 
-    let routes = filters::addon::filter(env)
+    let routes = filters::accounts::filter(env.clone())
+        .or(filters::addons::filter(env))
         .recover(error::unpack)
         .with(cors)
         .with(warp::log("addons"));

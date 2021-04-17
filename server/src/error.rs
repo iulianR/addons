@@ -3,12 +3,14 @@ use std::convert::Infallible;
 use serde::Serialize;
 use thiserror::Error;
 use warp::http::StatusCode;
-use warp::{reject::Reject, Rejection};
+use warp::Rejection;
 
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("Database error")]
     Db(#[from] sqlx::Error),
+    #[error("Argon error")]
+    Argon(#[from] argon2::Error)
 }
 
 impl warp::reject::Reject for Error {}
@@ -30,9 +32,15 @@ pub async fn unpack(err: Rejection) -> Result<impl warp::Reply, Infallible> {
         message = "Invalid Body";
     } else if let Some(e) = err.find::<Error>() {
         match e {
-            Error::Db(_) => {
+            Error::Db(e) => {
+                tracing::error!("Db err: {:?}", e);
                 code = StatusCode::BAD_REQUEST;
                 message = "Could not Execute request";
+            }
+            Error::Argon(e) => {
+                tracing::error!("Argon err: {:?}", e);
+                code = StatusCode::INTERNAL_SERVER_ERROR;
+                message = "Internal Server Error";
             }
             _ => {
                 tracing::error!("unhandled application error: {:?}", err);

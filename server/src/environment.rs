@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use sqlx::PgPool;
 
 #[derive(Debug, Clone)]

@@ -1,5 +1,15 @@
-pub mod addon;
+use warp::Filter;
 
+use crate::environment::Environment;
+
+pub mod accounts;
+pub mod addons;
+
+fn with_env(
+    env: Environment,
+) -> impl Filter<Extract = (Environment,), Error = std::convert::Infallible> + Clone {
+    warp::any().map(move || env.clone())
+}
 
 // #[cfg(test)]
 // mod tests {

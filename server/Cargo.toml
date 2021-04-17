@@ -8,25 +8,28 @@ edition = "2018"
 
 [dependencies]
 warp = "0.3"
-jsonwebtoken = "7.2"
 tokio = { version = "1.0", features = ["full"] }
+hyper = "0.14"
+
+jsonwebtoken = "7.2"
+
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
-common = { path = "../common" }
-log = "0.4"
-pretty_env_logger = "0.4"
+
 listenfd = "0.3"
 
 thiserror = "1"
 anyhow = "1.0"
 
-hyper = "0.14"
-
 tracing = "0.1"
 tracing-subscriber = "0.2"
 
-diesel = { version = "1.4.4", features = ["postgres"] }
 dotenv = "0.15.0"
 uuid = { version = "0.8", features = ["serde", "v4"] }
 
 sqlx = { git = "https://github.com/launchbadge/sqlx", features = [ "runtime-tokio-rustls", "postgres", "uuid" ] }
+
+shrinkwraprs = "0.3"
+unicode-width = "0.1"
+
+rust-argon2 = "0.8"

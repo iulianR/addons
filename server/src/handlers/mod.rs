@@ -1,1 +1,2 @@
-pub mod addon;
+pub mod accounts;
+pub mod addons;

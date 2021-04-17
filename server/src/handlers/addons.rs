@@ -1,35 +1,36 @@
-use crate::{environment::Environment, models::addon::{Addon, ListOptions}, sql::sql::get_all_addons};
+use crate::{
+    environment::Environment,
+    models::{
+        addons::{Addon, AddonPost, ListOptions},
+        IdResponse,
+    },
+    sql::addons,
+};
+use warp::http::StatusCode;
 
-use std::{convert::Infallible, vec};
-use uuid::Uuid;
-use warp::{http::StatusCode, reject};
-use crate::error::Error;
-
-pub async fn list_addons(
-    opts: ListOptions,
+pub async fn list(
+    _opts: ListOptions,
     env: Environment,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    let addons = get_all_addons(&env.db()).await?;
+    let addons = addons::get_all(&env.db()).await?;
     Ok(warp::reply::json(&addons))
 }
 
-// pub async fn create_addon(create: Addon, env: Environment) -> Result<impl warp::Reply, Infallible> {
-//     log::debug!("create_addon: {:?}", create);
+pub async fn create(
+    create: AddonPost,
+    env: Environment,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    tracing::debug!("create_addon: {:?}", create);
 
-//     let mut vec = env.db.lock().await;
+    let addon = Addon::new(create.name);
+    tracing::debug!("inserting: {:?}", addon);
+    addons::insert(&env.db(), &addon).await?;
 
-//     for todo in vec.iter() {
-//         if todo.id == create.id {
-//             log::debug!("    -> id already exists: {}", create.id);
-//             // Todo with id already exists, return `400 BadRequest`.
-//             return Ok(StatusCode::BAD_REQUEST);
-//         }
-//     }
-
-//     vec.push(create);
-
-//     Ok(StatusCode::CREATED)
-// }
+    Ok(warp::reply::with_status(
+        warp::reply::json(&IdResponse::new(addon.id)),
+        StatusCode::CREATED,
+    ))
+}
 
 // pub async fn update_addon(
 //     id: Uuid,
